@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/chat_message.dart';
 import '../services/bot_engine.dart';
+import '../views/file_viewer_screen.dart';
 import '../../reminder/controllers/reminder_controller.dart';
 
 class ChatController extends GetxController {
@@ -54,15 +55,6 @@ class ChatController extends GetxController {
         debugPrint('Failed to parse response as JSON: $e. Using raw string.');
       }
 
-      // Add bot reply to chat messages list
-      messages.add(
-        ChatMessage(
-          message: displayReply,
-          isUser: false,
-          createdAt: DateTime.now(),
-        ),
-      );
-
       // Check if a reminder was parsed and need to be scheduled
       if (parsedJson != null && parsedJson['reminder'] != null) {
         final reminderData = parsedJson['reminder'] as Map<String, dynamic>;
@@ -83,6 +75,8 @@ class ChatController extends GetxController {
         }
       }
 
+      String? successfullyCreatedFileName;
+
       // Check if a file creation was parsed and need to be created
       if (parsedJson != null && parsedJson['fileCreation'] != null) {
         final fileData = parsedJson['fileCreation'] as Map<String, dynamic>;
@@ -93,6 +87,7 @@ class ChatController extends GetxController {
           try {
             final File file = File(fileName.trim());
             await file.writeAsString(content);
+            successfullyCreatedFileName = fileName.trim();
             
             Get.snackbar(
               '📁 File Created',
@@ -118,6 +113,16 @@ class ChatController extends GetxController {
         }
       }
 
+      // Add bot reply to chat messages list
+      messages.add(
+        ChatMessage(
+          message: displayReply,
+          isUser: false,
+          createdAt: DateTime.now(),
+          createdFileName: successfullyCreatedFileName,
+        ),
+      );
+
       debugPrint('Bot replied: $displayReply');
     } catch (e) {
       messages.add(
@@ -130,6 +135,30 @@ class ChatController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  void openFile(String fileName) async {
+    try {
+      final file = File(fileName);
+      if (await file.exists()) {
+        final content = await file.readAsString();
+        Get.to(() => FileViewerScreen(fileName: fileName, content: content));
+      } else {
+        Get.snackbar(
+          'File Not Found',
+          'The file "$fileName" does not exist anymore.',
+          backgroundColor: Colors.red.shade600,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error Reading File',
+        'Could not read "$fileName": $e',
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+      );
     }
   }
 }

@@ -51,15 +51,20 @@ class ChatScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: msg.isUser
-                            ? Text(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (msg.isUser)
+                              Text(
                                 msg.message,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 14.5,
                                 ),
                               )
-                            : MarkdownBody(
+                            else
+                              MarkdownBody(
                                 data: msg.message,
                                 styleSheet: MarkdownStyleSheet(
                                   p: const TextStyle(
@@ -83,6 +88,43 @@ class ChatScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            if (msg.createdFileName != null) ...[
+                              const SizedBox(height: 10),
+                              GestureDetector(
+                                onTap: () => controller.openFile(msg.createdFileName!),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF252538),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: const Color(0xFF6C63FF).withValues(alpha: 0.2),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.insert_drive_file_rounded, color: Color(0xFF48CAE4), size: 18),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        child: Text(
+                                          msg.createdFileName!,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            decoration: TextDecoration.underline,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
                     );
                   },

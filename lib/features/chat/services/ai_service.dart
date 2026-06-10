@@ -7,7 +7,7 @@ class AiService {
   Future<String> askGemini(String prompt) async {
     try {
       final response = await dio.post(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${ApiConstants.apiKey}',
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${ApiConstants.apiKey}',
         data: {
           "contents": [
             {
