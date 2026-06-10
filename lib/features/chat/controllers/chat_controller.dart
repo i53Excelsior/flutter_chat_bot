@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_bot/features/chat/models/prompt_evulation.dart';
 import 'package:get/get.dart';
 
 import '../models/chat_message.dart';
-import '../models/structured_response.dart';
 import '../services/bot_engine.dart';
 
 class ChatController extends GetxController {
@@ -41,40 +39,19 @@ class ChatController extends GetxController {
         const Duration(milliseconds: 500),
       );
 
-      final StructuredResponse response =
-      await botEngine
-          .generateStructuredResponse(
-        text,
-      );
-
-      final PromptEvaluation evaluation =
-      botEngine.evaluateResponse(
-        text,
-        response,
-      );
-
-      lastEvaluation.value = '''
-Score: ${evaluation.score}/10
-
-${evaluation.feedback}
-''';
+      // Get the original plain-text response from Gemini
+      final String plainResponse =
+          await botEngine.generatePlainResponse(text);
 
       messages.add(
         ChatMessage(
-          message: response.summary,
+          message: plainResponse,
           isUser: false,
           createdAt: DateTime.now(),
-          structuredResponse: response,
         ),
       );
 
-      debugPrint(
-        'Evaluation Score: ${evaluation.score}',
-      );
-
-      debugPrint(
-        evaluation.feedback,
-      );
+      debugPrint('Bot replied: $plainResponse');
     } catch (e) {
       messages.add(
         ChatMessage(

@@ -7,6 +7,11 @@ import 'ai_service.dart';
 class BotEngine {
   final AiService _aiService = AiService();
 
+  /// Returns the raw Gemini response as plain text (no JSON forcing).
+  Future<String> generatePlainResponse(String input) async {
+    return await _aiService.askGemini(input);
+  }
+
   Future<StructuredResponse> generateStructuredResponse(
       String input,
       ) async {
