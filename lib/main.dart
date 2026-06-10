@@ -18,9 +18,33 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      title: 'AI Chat & Reminders',
+      themeMode: ThemeMode.dark,
+      darkTheme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0A0A0E),
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF6C63FF),
+          secondary: Color(0xFF48CAE4),
+          surface: Color(0xFF151521),
+          error: Colors.redAccent,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0A0A0E),
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        cardTheme: CardTheme(
+          color: const Color(0xFF151521),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 8,
+        ),
       ),
       home: HomeScreen(),
       debugShowCheckedModeBanner: false,

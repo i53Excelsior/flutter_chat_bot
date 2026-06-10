@@ -40,25 +40,46 @@ class ChatScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: msg.isUser
-                              ? Colors.blue
-                              : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(14),
+                              ? const Color(0xFF6C63FF)
+                              : const Color(0xFF1E1E2C),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: msg.isUser
                             ? Text(
                                 msg.message,
-                                style: const TextStyle(color: Colors.white),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.5,
+                                ),
                               )
                             : MarkdownBody(
                                 data: msg.message,
                                 styleSheet: MarkdownStyleSheet(
                                   p: const TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 14,
+                                    color: Colors.white,
+                                    fontSize: 14.5,
+                                    height: 1.4,
                                   ),
                                   code: const TextStyle(
-                                    backgroundColor: Color(0xFFEEEEEE),
+                                    backgroundColor: Color(0xFF2D2D3D),
+                                    color: Color(0xFF48CAE4),
                                     fontFamily: 'monospace',
+                                    fontSize: 13,
+                                  ),
+                                  codeblockPadding: const EdgeInsets.all(8),
+                                  codeblockDecoration: BoxDecoration(
+                                    color: const Color(0xFF2D2D3D),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  listBullet: const TextStyle(
+                                    color: Color(0xFF48CAE4),
                                   ),
                                 ),
                               ),
@@ -73,19 +94,24 @@ class ChatScreen extends StatelessWidget {
             Obx(
               () => controller.isLoading.value
                   ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6),
+                      padding: EdgeInsets.symmetric(vertical: 8),
                       child: Row(
                         children: [
                           SizedBox(width: 16),
                           SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFF6C63FF),
+                              ),
+                            ),
                           ),
-                          SizedBox(width: 10),
+                          SizedBox(width: 12),
                           Text(
-                            'Thinking...',
-                            style: TextStyle(color: Colors.grey),
+                            'AI is thinking...',
+                            style: TextStyle(color: Colors.grey, fontSize: 13),
                           ),
                         ],
                       ),
@@ -95,18 +121,23 @@ class ChatScreen extends StatelessWidget {
 
             // Input bar
             Container(
-              margin: const EdgeInsets.only(bottom: 10),
+              margin: const EdgeInsets.only(bottom: 12, top: 8),
               decoration: BoxDecoration(
+                color: const Color(0xFF1E1E2C),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.black12),
+                border: Border.all(
+                  color: const Color(0xFF6C63FF).withValues(alpha: 0.2),
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: controller.textController,
+                      style: const TextStyle(color: Colors.white, fontSize: 15),
                       decoration: const InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: 'Ask AI or set a reminder...',
+                        hintStyle: TextStyle(color: Colors.white38),
                         border: InputBorder.none,
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16),
@@ -119,11 +150,14 @@ class ChatScreen extends StatelessWidget {
                       onPressed: controller.isLoading.value
                           ? null
                           : controller.sendMessage,
-                      icon: const Icon(Icons.send),
+                      icon: const Icon(
+                        Icons.send_rounded,
+                        color: Color(0xFF6C63FF),
+                      ),
                     ),
                   ),
                 ],
-              ).paddingSymmetric(horizontal: 10, vertical: 6),
+              ).paddingSymmetric(horizontal: 6, vertical: 4),
             ),
           ],
         ).paddingSymmetric(horizontal: 16),

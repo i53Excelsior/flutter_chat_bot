@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../models/chat_message.dart';
 import '../services/bot_engine.dart';
+import '../../reminder/controllers/reminder_controller.dart';
 
 class ChatController extends GetxController {
   final BotEngine botEngine = BotEngine();
@@ -39,19 +40,49 @@ class ChatController extends GetxController {
         const Duration(milliseconds: 500),
       );
 
-      // Get the original plain-text response from Gemini
-      final String plainResponse =
+      // Get the JSON response from Gemini
+      final String jsonResponse =
           await botEngine.generatePlainResponse(text);
 
+      String displayReply = jsonResponse;
+      Map<String, dynamic>? parsedJson;
+      try {
+        parsedJson = jsonDecode(jsonResponse) as Map<String, dynamic>;
+        displayReply = parsedJson['reply']?.toString() ?? jsonResponse;
+      } catch (e) {
+        debugPrint('Failed to parse response as JSON: $e. Using raw string.');
+      }
+
+      // Add bot reply to chat messages list
       messages.add(
         ChatMessage(
-          message: plainResponse,
+          message: displayReply,
           isUser: false,
           createdAt: DateTime.now(),
         ),
       );
 
-      debugPrint('Bot replied: $plainResponse');
+      // Check if a reminder was parsed and need to be scheduled
+      if (parsedJson != null && parsedJson['reminder'] != null) {
+        final reminderData = parsedJson['reminder'] as Map<String, dynamic>;
+        final String title = reminderData['title']?.toString() ?? 'Reminder';
+        final String note = reminderData['note']?.toString() ?? '';
+        final String? scheduledAtIso = reminderData['scheduledAtIso']?.toString();
+
+        if (scheduledAtIso != null) {
+          final DateTime scheduledAt = DateTime.parse(scheduledAtIso);
+          
+          // Schedule the reminder using ReminderController
+          final reminderController = Get.find<ReminderController>();
+          reminderController.addReminder(
+            title: title,
+            note: note,
+            scheduledAt: scheduledAt,
+          );
+        }
+      }
+
+      debugPrint('Bot replied: $displayReply');
     } catch (e) {
       messages.add(
         ChatMessage(

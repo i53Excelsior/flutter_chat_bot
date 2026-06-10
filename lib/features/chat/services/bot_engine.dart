@@ -7,9 +7,40 @@ import 'ai_service.dart';
 class BotEngine {
   final AiService _aiService = AiService();
 
-  /// Returns the raw Gemini response as plain text (no JSON forcing).
+  /// Returns a JSON string containing "reply" and an optional "reminder" object.
   Future<String> generatePlainResponse(String input) async {
-    return await _aiService.askGemini(input);
+    final String currentTimeStr = DateTime.now().toLocal().toString();
+    final String systemPrompt = '''
+You are a helpful AI Assistant that can chat with the user and set reminders.
+
+The current local date and time is: $currentTimeStr.
+
+IMPORTANT: Return ONLY a valid JSON object.
+Do NOT use markdown code blocks like ```json.
+Do NOT include any explanations or extra text outside the JSON object.
+
+JSON Schema:
+{
+  "reply": "Your natural language response to the user. If they asked to set a reminder, acknowledge it and confirm you set it.",
+  "reminder": {
+    "title": "A short, descriptive title for the reminder",
+    "note": "Optional details or note",
+    "scheduledAtIso": "ISO 8601 string of when the reminder should fire. Compute this date and time accurately based on the current local time provided."
+  }
+}
+
+If the user did NOT request to set a reminder, set the "reminder" field to null.
+
+User Input:
+$input
+''';
+
+    final result = await _aiService.askGemini(systemPrompt);
+    final String cleanJson = result
+        .replaceAll('```json', '')
+        .replaceAll('```', '')
+        .trim();
+    return cleanJson;
   }
 
   Future<StructuredResponse> generateStructuredResponse(

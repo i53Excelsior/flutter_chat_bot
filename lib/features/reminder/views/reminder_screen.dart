@@ -11,19 +11,8 @@ class ReminderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FB),
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFF6C63FF),
-        title: const Text(
-          '⏰ Reminders',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        centerTitle: false,
+        title: const Text('⏰ Reminders'),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddReminderSheet(context),
@@ -62,7 +51,7 @@ class ReminderScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
-              color: const Color(0xFF6C63FF).withOpacity(0.1),
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -77,13 +66,13 @@ class ReminderScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF2D2D44),
+              color: Colors.white,
             ),
           ),
           const SizedBox(height: 10),
           const Text(
             'Tap "Set Reminder" to add your first reminder.',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontSize: 14, color: Colors.white54),
             textAlign: TextAlign.center,
           ),
         ],
@@ -102,7 +91,7 @@ class ReminderScreen extends StatelessWidget {
         builder: (ctx, setState) {
           return Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: Color(0xFF151521),
               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
             padding: EdgeInsets.only(
@@ -122,7 +111,7 @@ class ReminderScreen extends StatelessWidget {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: Colors.grey.shade700,
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
@@ -133,7 +122,7 @@ class ReminderScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D2D44),
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -200,9 +189,10 @@ class ReminderScreen extends StatelessWidget {
                               lastDate: DateTime.now()
                                   .add(const Duration(days: 365)),
                               builder: (ctx, child) => Theme(
-                                data: ThemeData.light().copyWith(
-                                  colorScheme: const ColorScheme.light(
+                                data: ThemeData.dark().copyWith(
+                                  colorScheme: const ColorScheme.dark(
                                     primary: Color(0xFF6C63FF),
+                                    surface: Color(0xFF151521),
                                   ),
                                 ),
                                 child: child!,
@@ -235,9 +225,10 @@ class ReminderScreen extends StatelessWidget {
                               context: context,
                               initialTime: selectedTime,
                               builder: (ctx, child) => Theme(
-                                data: ThemeData.light().copyWith(
-                                  colorScheme: const ColorScheme.light(
+                                data: ThemeData.dark().copyWith(
+                                  colorScheme: const ColorScheme.dark(
                                     primary: Color(0xFF6C63FF),
+                                    surface: Color(0xFF151521),
                                   ),
                                 ),
                                 child: child!,
@@ -346,11 +337,11 @@ class _ReminderCard extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFF151521),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF6C63FF).withOpacity(0.08),
+              color: const Color(0xFF6C63FF).withValues(alpha: 0.1),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
@@ -385,7 +376,7 @@ class _ReminderCard extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: isFired ? Colors.grey : const Color(0xFF2D2D44),
+              color: isFired ? Colors.grey : Colors.white,
               decoration: isFired ? TextDecoration.lineThrough : null,
             ),
           ),
@@ -423,8 +414,8 @@ class _ReminderCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: isFired
-                      ? Colors.grey.shade200
-                      : const Color(0xFF6C63FF).withOpacity(0.12),
+                      ? Colors.grey.shade800
+                      : const Color(0xFF6C63FF).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -473,9 +464,9 @@ class _PickerButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.4)),
+          border: Border.all(color: const Color(0xFF6C63FF).withValues(alpha: 0.4)),
           borderRadius: BorderRadius.circular(14),
-          color: const Color(0xFF6C63FF).withOpacity(0.05),
+          color: const Color(0xFF6C63FF).withValues(alpha: 0.08),
         ),
         child: Row(
           children: [
@@ -493,7 +484,7 @@ class _PickerButton extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF2D2D44),
+                    color: Colors.white,
                   ),
                 ),
               ],

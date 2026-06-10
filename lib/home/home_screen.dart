@@ -27,10 +27,10 @@ class HomeScreen extends StatelessWidget {
         ),
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: const Color(0xFF12121A),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, -4),
               ),
@@ -39,9 +39,9 @@ class HomeScreen extends StatelessWidget {
           child: BottomNavigationBar(
             currentIndex: _currentIndex.value,
             onTap: (i) => _currentIndex.value = i,
-            backgroundColor: Colors.white,
+            backgroundColor: const Color(0xFF12121A),
             selectedItemColor: const Color(0xFF6C63FF),
-            unselectedItemColor: Colors.grey.shade400,
+            unselectedItemColor: Colors.grey.shade600,
             selectedLabelStyle: const TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 12,
@@ -93,7 +93,7 @@ class _NavIcon extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
         color: isActive
-            ? const Color(0xFF6C63FF).withOpacity(0.12)
+            ? const Color(0xFF6C63FF).withValues(alpha: 0.15)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
       ),
