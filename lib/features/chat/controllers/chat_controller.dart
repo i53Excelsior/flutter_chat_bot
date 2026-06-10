@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/chat_message.dart';
@@ -79,6 +80,41 @@ class ChatController extends GetxController {
             note: note,
             scheduledAt: scheduledAt,
           );
+        }
+      }
+
+      // Check if a file creation was parsed and need to be created
+      if (parsedJson != null && parsedJson['fileCreation'] != null) {
+        final fileData = parsedJson['fileCreation'] as Map<String, dynamic>;
+        final String? fileName = fileData['fileName']?.toString();
+        final String content = fileData['content']?.toString() ?? '';
+
+        if (fileName != null && fileName.trim().isNotEmpty) {
+          try {
+            final File file = File(fileName.trim());
+            await file.writeAsString(content);
+            
+            Get.snackbar(
+              '📁 File Created',
+              'Successfully created "$fileName"',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.blue.shade600,
+              colorText: Colors.white,
+              duration: const Duration(seconds: 3),
+              margin: const EdgeInsets.all(12),
+              borderRadius: 12,
+              icon: const Icon(Icons.file_copy_rounded, color: Colors.white),
+            );
+          } catch (fileErr) {
+            debugPrint('Failed to create file: $fileErr');
+            Get.snackbar(
+              '⚠️ File Creation Failed',
+              'Error writing "$fileName": $fileErr',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red.shade600,
+              colorText: Colors.white,
+            );
+          }
         }
       }
 

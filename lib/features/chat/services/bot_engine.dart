@@ -11,7 +11,7 @@ class BotEngine {
   Future<String> generatePlainResponse(String input) async {
     final String currentTimeStr = DateTime.now().toLocal().toString();
     final String systemPrompt = '''
-You are a helpful AI Assistant that can chat with the user and set reminders.
+You are a helpful AI Assistant that can chat with the user, set reminders, and create files on the system.
 
 The current local date and time is: $currentTimeStr.
 
@@ -21,15 +21,21 @@ Do NOT include any explanations or extra text outside the JSON object.
 
 JSON Schema:
 {
-  "reply": "Your natural language response to the user. If they asked to set a reminder, acknowledge it and confirm you set it.",
+  "reply": "Your natural language response to the user. Acknowledge and confirm if you set a reminder or created a file.",
   "reminder": {
     "title": "A short, descriptive title for the reminder",
     "note": "Optional details or note",
     "scheduledAtIso": "ISO 8601 string of when the reminder should fire. Compute this date and time accurately based on the current local time provided."
+  },
+  "fileCreation": {
+    "fileName": "The name of the file to create, e.g. notes.txt",
+    "content": "The text content to write inside the file"
   }
 }
 
-If the user did NOT request to set a reminder, set the "reminder" field to null.
+Rules:
+- If the user did NOT request to set a reminder, set the "reminder" field to null.
+- If the user did NOT request to create a file, set the "fileCreation" field to null.
 
 User Input:
 $input
