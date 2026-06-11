@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_bot/home/home_controller.dart';
 import 'package:get/get.dart';
 import '../models/chat_message.dart';
 import '../services/bot_engine.dart';
 import '../views/file_viewer_screen.dart';
 import '../../reminder/controllers/reminder_controller.dart';
+import 'json_output_controller.dart';
+
 
 class ChatController extends GetxController {
   final BotEngine botEngine = BotEngine();
@@ -109,6 +112,29 @@ class ChatController extends GetxController {
               backgroundColor: Colors.red.shade600,
               colorText: Colors.white,
             );
+          }
+        }
+      }
+
+      // Check if JSON output was parsed and need to be saved
+      if (parsedJson != null && parsedJson['jsonOutput'] != null) {
+        final jsonOutputData = parsedJson['jsonOutput'] as Map<String, dynamic>;
+        final String title = jsonOutputData['title']?.toString() ?? 'JSON Output';
+        final dynamic data = jsonOutputData['data'];
+
+        if (data != null) {
+          final jsonOutputController = Get.find<JsonOutputController>();
+          jsonOutputController.addJsonOutput(
+            title: title,
+            data: data,
+          );
+
+          // Automatically switch tab to JSON (index 2)
+          try {
+            final homeController = Get.find<HomeController>();
+            homeController.changeTab(2);
+          } catch (tabErr) {
+            debugPrint('Failed to switch tab: $tabErr');
           }
         }
       }

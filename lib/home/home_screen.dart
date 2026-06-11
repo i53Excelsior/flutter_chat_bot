@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../features/chat/controllers/json_output_controller.dart';
 import '../features/chat/views/chat_screen.dart';
+import '../features/chat/views/json_output_screen.dart';
 import '../features/reminder/controllers/reminder_controller.dart';
 import '../features/reminder/views/reminder_screen.dart';
+import 'home_controller.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key}) {
-    // Register ReminderController globally once here
+    // Register Controllers globally
     Get.put(ReminderController());
+    Get.put(JsonOutputController());
   }
 
-  final RxInt _currentIndex = 0.obs;
+  final HomeController homeController = Get.put(HomeController());
 
   late final List<Widget> _pages = [
     ChatScreen(),
     ReminderScreen(),
+    JsonOutputScreen(),
   ];
 
   @override
@@ -22,7 +27,7 @@ class HomeScreen extends StatelessWidget {
     return Obx(
       () => Scaffold(
         body: IndexedStack(
-          index: _currentIndex.value,
+          index: homeController.currentIndex.value,
           children: _pages,
         ),
         bottomNavigationBar: Container(
@@ -37,8 +42,8 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           child: BottomNavigationBar(
-            currentIndex: _currentIndex.value,
-            onTap: (i) => _currentIndex.value = i,
+            currentIndex: homeController.currentIndex.value,
+            onTap: homeController.changeTab,
             backgroundColor: const Color(0xFF12121A),
             selectedItemColor: const Color(0xFF6C63FF),
             unselectedItemColor: Colors.grey.shade600,
@@ -54,7 +59,7 @@ class HomeScreen extends StatelessWidget {
                 icon: _NavIcon(
                   icon: Icons.chat_bubble_outline_rounded,
                   activeIcon: Icons.chat_bubble_rounded,
-                  isActive: _currentIndex.value == 0,
+                  isActive: homeController.currentIndex.value == 0,
                 ),
                 label: 'Chat',
               ),
@@ -62,9 +67,17 @@ class HomeScreen extends StatelessWidget {
                 icon: _NavIcon(
                   icon: Icons.alarm_outlined,
                   activeIcon: Icons.alarm_rounded,
-                  isActive: _currentIndex.value == 1,
+                  isActive: homeController.currentIndex.value == 1,
                 ),
                 label: 'Reminders',
+              ),
+              BottomNavigationBarItem(
+                icon: _NavIcon(
+                  icon: Icons.code_rounded,
+                  activeIcon: Icons.code_rounded,
+                  isActive: homeController.currentIndex.value == 2,
+                ),
+                label: 'JSON',
               ),
             ],
           ),

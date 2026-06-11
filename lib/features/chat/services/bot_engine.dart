@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 import '../models/prompt_evulation.dart';
 import '../models/structured_response.dart';
@@ -7,11 +8,11 @@ import 'ai_service.dart';
 class BotEngine {
   final AiService _aiService = AiService();
 
-  /// Returns a JSON string containing "reply" and an optional "reminder" object.
+  /// Returns a JSON string containing "reply", an optional "reminder", and an optional "jsonOutput" object.
   Future<String> generatePlainResponse(String input) async {
     final String currentTimeStr = DateTime.now().toLocal().toString();
     final String systemPrompt = '''
-You are a helpful AI Assistant that can chat with the user, set reminders, and create files on the system.
+You are a helpful AI Assistant that can chat with the user, set reminders, create files on the system, and generate structured JSON outputs.
 
 The current local date and time is: $currentTimeStr.
 
@@ -21,7 +22,7 @@ Do NOT include any explanations or extra text outside the JSON object.
 
 JSON Schema:
 {
-  "reply": "Your natural language response to the user. Acknowledge and confirm if you set a reminder or created a file.",
+  "reply": "Your natural language response to the user. Acknowledge and confirm if you set a reminder, created a file, or generated a JSON output.",
   "reminder": {
     "title": "A short, descriptive title for the reminder",
     "note": "Optional details or note",
@@ -30,12 +31,18 @@ JSON Schema:
   "fileCreation": {
     "fileName": "The name of the file to create, e.g. notes.txt",
     "content": "The text content to write inside the file"
+  },
+  "jsonOutput": {
+    "title": "A short, descriptive title for the generated JSON data (e.g. 'User Profiles List')",
+    "data": "The actual JSON object, array, or data requested by the user, formatted correctly in JSON. This must be a valid JSON value (object, array, etc.), NOT a string containing stringified JSON."
   }
 }
 
 Rules:
 - If the user did NOT request to set a reminder, set the "reminder" field to null.
 - If the user did NOT request to create a file, set the "fileCreation" field to null.
+- If the user did NOT request information, data, or formatting in JSON format, set the "jsonOutput" field to null.
+- If the user explicitly asks for JSON formatting, JSON representation, or to output data as JSON, generate the requested JSON and set the "jsonOutput" field with a descriptive title and the actual JSON structure in "data".
 
 User Input:
 $input
@@ -81,20 +88,20 @@ $input
         systemPrompt,
       );
 
-      print('========================');
-      print('RAW GEMINI RESPONSE');
-      print(result);
-      print('========================');
+      debugPrint('========================');
+      debugPrint('RAW GEMINI RESPONSE');
+      debugPrint(result);
+      debugPrint('========================');
 
       final String cleanJson = result
           .replaceAll('```json', '')
           .replaceAll('```', '')
           .trim();
 
-      print('========================');
-      print('CLEAN JSON');
-      print(cleanJson);
-      print('========================');
+      debugPrint('========================');
+      debugPrint('CLEAN JSON');
+      debugPrint(cleanJson);
+      debugPrint('========================');
 
       final Map<String, dynamic> json =
       jsonDecode(cleanJson);
@@ -112,11 +119,11 @@ $input
             [],
       );
     } catch (e, stackTrace) {
-      print('========================');
-      print('BOT ENGINE ERROR');
-      print(e);
-      print(stackTrace);
-      print('========================');
+      debugPrint('========================');
+      debugPrint('BOT ENGINE ERROR');
+      debugPrint(e.toString());
+      debugPrint(stackTrace.toString());
+      debugPrint('========================');
 
       return StructuredResponse(
         title: 'Error',
